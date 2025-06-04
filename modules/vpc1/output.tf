@@ -7,3 +7,10 @@ output "subnet_id" {
   value       = aws_subnet.public1.id
 }
 
+output "cidr_block" {
+  value = var.cidr_block
+}
+
+output "public_route_table_id" {
+  value = aws_route_table.rt.id
+}

@@ -33,3 +33,27 @@ module "vpc2-Ec2" {
   subnet_id     = module.vpc2.subnet_id
   vpc_id = module.vpc2.vpc_id 
 }
+
+resource "aws_vpc_peering_connection" "vpc_peering" {
+  vpc_id        = module.vpc1.vpc_id     # Requester
+  peer_vpc_id   = module.vpc2.vpc_id     # Accepter
+  auto_accept   = true                   # Set to false if peer is in another account
+
+  tags = {
+    Name = "Ramya vpc1-Ramya vpc2-peering"
+  }
+}
+
+resource "aws_route" "vpc1_to_vpc2" {
+  route_table_id            = module.vpc1.public_route_table_id
+  destination_cidr_block    = module.vpc2.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
+}
+
+resource "aws_route" "vpc2_to_vpc1" {
+  route_table_id            = module.vpc2.public_route_table_id
+  destination_cidr_block    = module.vpc1.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
+}
+
+
